@@ -43,6 +43,11 @@ function createCalendarEvent() {
       var endDateTime = new Date(date);
       endDateTime.setHours(endTime.getHours(), endTime.getMinutes());
 
+      // Adjust end time if it is earlier than start time (indicating it goes to the next day)
+      if (endDateTime <= startDateTime) {
+        endDateTime.setDate(endDateTime.getDate() + 1);
+      }
+
       // Log the Date objects to check their values
       Logger.log('Creating event: ' + title + ' from ' + startDateTime.toString() + ' to ' + endDateTime.toString());
 
