@@ -27,12 +27,21 @@ function createCalendarEvent() {
       var startTime = values[i][2];  // Start time from column C
       var endTime = values[i][3];    // End time from column D
 
-      // Log values for debugging
-      Logger.log('Row ' + (i + 1) + ': Title: ' + title + ', Date: ' + date + ', Start Time: ' + startTime + ', End Time: ' + endTime);
+      // Log entire row for debugging
+      Logger.log('Row ' + (i + 1) + ': ' + JSON.stringify(values[i]));
+
+      // Check for missing start time or end time
+      if (!startTime || !endTime) {
+        Logger.log('Start time or end time is missing for row ' + (i + 1));
+        continue;  // Skip this iteration
+      }
 
       // Combine date and time to create Date objects for start and end times
-      var startDateTime = new Date(date + " " + startTime);
-      var endDateTime = new Date(date + " " + endTime);
+      var startDateTime = new Date(date);
+      startDateTime.setHours(startTime.getHours(), startTime.getMinutes());
+      
+      var endDateTime = new Date(date);
+      endDateTime.setHours(endTime.getHours(), endTime.getMinutes());
 
       // Log the Date objects to check their values
       Logger.log('Creating event: ' + title + ' from ' + startDateTime.toString() + ' to ' + endDateTime.toString());
