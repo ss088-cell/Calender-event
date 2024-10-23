@@ -1,12 +1,20 @@
 function createCalendarEvent() {
-  var sheetId = 'YOUR_SHEET_ID_HERE';  // Replace with your Google Sheet ID (ensure no spaces or special characters)
+  var sheetId = 'YOUR_SHEET_ID_HERE';  // Replace with your Google Sheet ID
+  
+  Logger.log('Sheet ID: ' + sheetId);
   
   try {
     // Open the spreadsheet by ID
     var spreadsheet = SpreadsheetApp.openById(sheetId);
-    var sheet = spreadsheet.getSheetByName('Sheet1');  // Replace 'Sheet1' with the name of your sheet if needed
-    
-    var calendar = CalendarApp.getDefaultCalendar();  // or specify a calendar ID if needed
+    Logger.log('Spreadsheet opened successfully: ' + spreadsheet.getName());
+
+    var sheet = spreadsheet.getSheetByName('Sheet1');  // Adjust if your sheet name is different
+    if (!sheet) {
+      throw new Error('Sheet not found: Sheet1');
+    }
+
+    var calendar = CalendarApp.getDefaultCalendar();  // Use default calendar or specify an ID
+    Logger.log('Using calendar: ' + calendar.getName());
 
     // Get data from the sheet
     var range = sheet.getDataRange();
@@ -19,12 +27,19 @@ function createCalendarEvent() {
       var startTime = values[i][2];  // Start time from column C
       var endTime = values[i][3];    // End time from column D
 
-      // Combine date and time to create a Date object for start and end times
+      // Log values for debugging
+      Logger.log('Row ' + (i + 1) + ': Title: ' + title + ', Date: ' + date + ', Start Time: ' + startTime + ', End Time: ' + endTime);
+
+      // Combine date and time to create Date objects for start and end times
       var startDateTime = new Date(date + " " + startTime);
       var endDateTime = new Date(date + " " + endTime);
 
+      // Log the Date objects to check their values
+      Logger.log('Creating event: ' + title + ' from ' + startDateTime.toString() + ' to ' + endDateTime.toString());
+
       // Create event in Google Calendar
-      calendar.createEvent(title, startDateTime, endDateTime);
+      var event = calendar.createEvent(title, startDateTime, endDateTime);
+      Logger.log('Event created: ' + event.getId());
     }
     
     Logger.log('Events created successfully.');
@@ -32,4 +47,3 @@ function createCalendarEvent() {
     Logger.log('Error: ' + e.message);
   }
 }
-
