@@ -40,11 +40,11 @@ function createCalendarEvent() {
       var startDateTime = new Date(date);
       var endDateTime = new Date(date);
 
-      // Parse start time
+      // Parse start time (expected in HH:mm format)
       var startHourMinute = startTime.split(':');
       startDateTime.setHours(parseInt(startHourMinute[0]), parseInt(startHourMinute[1]));
 
-      // Parse end time
+      // Parse end time (expected in HH:mm format)
       var endHourMinute = endTime.split(':');
       endDateTime.setHours(parseInt(endHourMinute[0]), parseInt(endHourMinute[1]));
 
@@ -66,4 +66,5 @@ function createCalendarEvent() {
     Logger.log('Error: ' + e.message);
   }
 }
+
 
