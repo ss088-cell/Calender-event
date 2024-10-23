@@ -38,14 +38,19 @@ function createCalendarEvent() {
 
       // Combine date and time to create Date objects for start and end times
       var startDateTime = new Date(date);
-      startDateTime.setHours(startTime.getHours(), startTime.getMinutes());
-      
       var endDateTime = new Date(date);
-      endDateTime.setHours(endTime.getHours(), endTime.getMinutes());
+
+      // Parse start time
+      var startHourMinute = startTime.split(':');
+      startDateTime.setHours(parseInt(startHourMinute[0]), parseInt(startHourMinute[1]));
+
+      // Parse end time
+      var endHourMinute = endTime.split(':');
+      endDateTime.setHours(parseInt(endHourMinute[0]), parseInt(endHourMinute[1]));
 
       // Adjust end time if it is earlier than start time (indicating it goes to the next day)
       if (endDateTime <= startDateTime) {
-        endDateTime.setDate(endDateTime.getDate() + 1);
+        endDateTime.setDate(endDateTime.getDate() + 1); // Move end time to the next day
       }
 
       // Log the Date objects to check their values
@@ -61,3 +66,4 @@ function createCalendarEvent() {
     Logger.log('Error: ' + e.message);
   }
 }
+
