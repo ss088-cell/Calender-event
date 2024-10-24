@@ -27,36 +27,38 @@ function createCalendarEvent() {
       var startTime = values[i][2];  // Start time from column C
       var endTime = values[i][3];    // End time from column D
 
-      // Log entire row for debugging
+      // Log the data for debugging
       Logger.log('Row ' + (i + 1) + ': ' + JSON.stringify(values[i]));
 
-      // Check for missing start time or end time
+      // Check if start or end time is missing
       if (!startTime || !endTime) {
         Logger.log('Start time or end time is missing for row ' + (i + 1));
-        continue;  // Skip this iteration
+        continue;  // Skip this row
       }
 
-      // Combine date and time to create Date objects for start and end times
-      var startDateTime = new Date(date);
-      var endDateTime = new Date(date);
-
-      // Parse start time (expected in HH:mm format)
+      // Convert date string to a Date object
+      var eventDate = new Date(date);
+      
+      // Split startTime and endTime (assuming HH:mm format)
       var startHourMinute = startTime.split(':');
+      var endHourMinute = endTime.split(':');
+
+      // Create Date objects for the start and end times
+      var startDateTime = new Date(eventDate);
       startDateTime.setHours(parseInt(startHourMinute[0]), parseInt(startHourMinute[1]));
 
-      // Parse end time (expected in HH:mm format)
-      var endHourMinute = endTime.split(':');
+      var endDateTime = new Date(eventDate);
       endDateTime.setHours(parseInt(endHourMinute[0]), parseInt(endHourMinute[1]));
 
-      // Adjust end time if it is earlier than start time (indicating it goes to the next day)
+      // If end time is earlier than start time, assume it's on the next day
       if (endDateTime <= startDateTime) {
-        endDateTime.setDate(endDateTime.getDate() + 1); // Move end time to the next day
+        endDateTime.setDate(endDateTime.getDate() + 1);
       }
 
-      // Log the Date objects to check their values
+      // Log the Date objects for debugging
       Logger.log('Creating event: ' + title + ' from ' + startDateTime.toString() + ' to ' + endDateTime.toString());
 
-      // Create event in Google Calendar
+      // Create the event in the Google Calendar
       var event = calendar.createEvent(title, startDateTime, endDateTime);
       Logger.log('Event created: ' + event.getId());
     }
@@ -66,5 +68,3 @@ function createCalendarEvent() {
     Logger.log('Error: ' + e.message);
   }
 }
-
-
