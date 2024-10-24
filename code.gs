@@ -1,5 +1,5 @@
 function createCalendarEvent() {
-  var sheetId = 'YOUR_SHEET_ID_HERE';  // Replace with your Google Sheet ID
+  var sheetId = '1dxSfhalF21UETn3Hz0HghU-ogMH3duooLRbxmqz8Scg';  // Replace with your Google Sheet ID
   
   Logger.log('Sheet ID: ' + sheetId);
   
@@ -8,9 +8,9 @@ function createCalendarEvent() {
     var spreadsheet = SpreadsheetApp.openById(sheetId);
     Logger.log('Spreadsheet opened successfully: ' + spreadsheet.getName());
 
-    var sheet = spreadsheet.getSheetByName('Sheet1');  // Adjust if your sheet name is different
+    var sheet = spreadsheet.getSheetByName('event');  // Adjust if your sheet name is different
     if (!sheet) {
-      throw new Error('Sheet not found: Sheet1');
+      throw new Error('Sheet not found: event');
     }
 
     var calendar = CalendarApp.getDefaultCalendar();  // Use default calendar or specify an ID
@@ -24,8 +24,8 @@ function createCalendarEvent() {
     for (var i = 1; i < values.length; i++) {
       var title = values[i][0];  // Event title from column A
       var date = values[i][1];   // Date from column B
-      var startTime = values[i][2];  // Start time from column C
-      var endTime = values[i][3];    // End time from column D
+      var startTime = values[i][2];  // Start time from column C (as Date)
+      var endTime = values[i][3];    // End time from column D (as Date)
 
       // Log the data for debugging
       Logger.log('Row ' + (i + 1) + ': ' + JSON.stringify(values[i]));
@@ -36,22 +36,21 @@ function createCalendarEvent() {
         continue;  // Skip this row
       }
 
-      // Convert date string to a Date object
-      var eventDate = new Date(date);
+      // If startTime and endTime are Date objects, extract hours and minutes
+      var startHours = startTime.getHours();
+      var startMinutes = startTime.getMinutes();
+      var endHours = endTime.getHours();
+      var endMinutes = endTime.getMinutes();
+
+      // Parse the date and set the hours and minutes
+      var startDateTime = new Date(date);
+      startDateTime.setHours(startHours, startMinutes);
       
-      // Split startTime and endTime (assuming HH:mm format)
-      var startHourMinute = startTime.split(':');
-      var endHourMinute = endTime.split(':');
+      var endDateTime = new Date(date);
+      endDateTime.setHours(endHours, endMinutes);
 
-      // Create Date objects for the start and end times
-      var startDateTime = new Date(eventDate);
-      startDateTime.setHours(parseInt(startHourMinute[0]), parseInt(startHourMinute[1]));
-
-      var endDateTime = new Date(eventDate);
-      endDateTime.setHours(parseInt(endHourMinute[0]), parseInt(endHourMinute[1]));
-
-      // If end time is earlier than start time, assume it's on the next day
-      if (endDateTime <= startDateTime) {
+      // Adjust endDateTime to the next day if endTime is earlier than startTime
+      if (endHours < startHours || (endHours === startHours && endMinutes <= startMinutes)) {
         endDateTime.setDate(endDateTime.getDate() + 1);
       }
 
@@ -68,3 +67,4 @@ function createCalendarEvent() {
     Logger.log('Error: ' + e.message);
   }
 }
+
